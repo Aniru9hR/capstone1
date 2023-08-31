@@ -1,0 +1,280 @@
+---
+title: "World data 2023"
+author: "Anirudh R"
+date: "2023-08-28"
+---
+
+# **Background**
+
+In this case study, I would analyse the Global Country Information Dataset 2023 and investigate the relationship between countries and the agricultural land which would provide more information about food security . I would analyse healthcare metrics such as infant mortality and life expectancy to assess overall well-being and I would be investigating educational enrolment rates,gdp and unemployment rates . Finally, I would be analysing the defence and military power of countries across the world .
+
+## Step 1: Imports
+
+Import libraries
+
+```{r}
+install.packages('tidyverse')
+library(tidyverse)
+```
+
+Read the data from .csv to .rmd format and created a data frame
+
+```{r}
+df <- read_csv("C:/Users/aniru/OneDrive/Documents/codingtemple/week8/capstone1/world-data-2023.csv")
+df
+```
+
+## Step 2: Tidy the Data
+
+Removed columns which were not necessary for my analysis and these columns had a lot of missing data
+
+```{r}
+df1<- df[-c(3,8:11,12:16,21,23,25:27,29, 31,33:35)]
+```
+
+Created a new data frame df1
+
+```{r}
+df1
+```
+
+Renamed column names and these are the columns i would be working on
+
+```{r}
+colnames(df1) <- c('country','density ','agricultural_land','land_area','armed_forces_size','birth_rate','gdp','gross_primary_ education_enrollment','gross_tertiary_education_enrollment','infant_mortality','life_expectancy','minimum_wage','population','tax_revenue','unemployment_rate')
+```
+
+Checking the number of null values in each column
+
+```{r}
+colSums(is.na(df1))
+```
+
+The sum of the number of null values in the dataframe df1
+
+```{r}
+sum(colSums(is.na(df1)))
+```
+
+Replaced all the null values of numeric columns to zero
+
+```{r}
+df1 <- df1 %>% 
+    mutate_if(is.numeric, ~replace_na(., 0))
+```
+
+The null values in all the numeric columns have been removed
+
+```{r}
+colSums(is.na(df1))
+```
+
+Displaying the cleaned data frame
+
+```{r}
+df1
+```
+
+Exported the cleaned data frame to a .csv file
+
+```{r}
+write.csv(df1, "world_data_2023.csv")
+```
+
+## Step 3: Explore
+
+Exploring the descriptive statistics for all the numeric columns of the data frame
+
+```{r}
+df2 <- select_if(df1, is.numeric) 
+summary(df2)
+```
+
+I would like to check which countries have a high life expectancy ,agricultural land,tertiary educational enrolment rates ,infant mortality ,unemployment rates and ,gdp and military power
+
+These are the hypothesis i have considered :
+
+[Hypothesis 1:]{.underline}
+
+**Question**
+
+Is there a correlation between birth rate and infant mortality
+
+**Null Hypothesis**
+
+There is no correlation between birth rate and infant mortality
+
+**Alternate Hypothesis**
+
+There is correlation between birth rate and infant mortality
+
+**Test**
+
+A correlation test would be performed and then reject or fail to reject one of the hypothesis
+
+**Conclusion**
+
+Analyse the results and draw conclusions depending on whether the hypothesis is rejected or not
+
+[Hypothesis 2:]{.underline}
+
+**Question**
+
+Is there a correlation between birth rate and life expectancy
+
+**Null Hypothesis**
+
+There is no correlation between birth rate and life expectancy
+
+**Alternate Hypothesis**
+
+There is correlation between birth rate and life expectancy
+
+**Test**
+
+A correlation test would be performed and then reject or fail to reject one of the hypothesis
+
+**Conclusion**
+
+Analyse the results and draw conclusions depending on whether the hypothesis is rejected or not
+
+[Hypothesis 3:]{.underline}
+
+**Question**
+
+Is there a correlation between population and armed forces size
+
+**Null Hypothesis**
+
+There is no correlation between population and armed forces size
+
+**Alternate Hypothesis**
+
+There is correlation between population and armed forces size
+
+**Test**
+
+A correlation test would be performed and then reject or fail to reject one of the hypothesis
+
+**Conclusion**
+
+Analyse the results and draw conclusions depending on whether the hypothesis is rejected or not
+
+I would like to check if there is a correlation between birth rate and infant mortality,birth rate and life expectancy,population and armed forces size.I would be using the Pearson's correlation statistical test to check the strength and direction of correlation between two variables from the dataframe
+
+**Visualizations**:
+
+I would be creating scatterplots for countries having highest life expectancy, largest armed forces size,highest unemployment rate and highest population.
+
+**Top ten countries having highest life expectancy**
+
+```{r}
+df1 %>% 
+    arrange(desc(life_expectancy)) %>%
+    slice(1:10) %>%
+    ggplot(. ,aes(country, life_expectancy))+
+geom_point()
+```
+
+As per the scatter plot, San Marino has the highest life expectancy with an average of around 85.4 years . 
+
+**Top ten countries having the largest armed forces size**
+
+```{r}
+df1 %>% 
+    arrange(desc(armed_forces_size)) %>%
+    slice(1:10) %>%
+    ggplot(. ,aes(country, armed_forces_size))+
+geom_point()
+```
+
+India has the largest armed forces size of 3 million active personnel followed by China which has around 2.7 million active personnel
+
+**Top ten countries with  the highest unemployment rate**
+
+```{r}
+df1 %>% 
+    arrange(desc(unemployment_rate)) %>%
+    slice(1:10) %>%
+    ggplot(. ,aes(country, unemployment_rate))+
+geom_point()
+```
+
+As per the scatterplot above, Italy has the highest unemployment rate followed by Argentina
+
+**Top ten countries with the highest population**
+
+```{r}
+df1 %>% 
+    arrange(desc(population)) %>%
+    slice(1:10) %>%
+    ggplot(. ,aes(country, population))+
+geom_point()
+```
+
+China has the highest population in the world with a little over one billion followed by India
+
+**Infant mortality vs Life expectancy**
+
+```{r}
+ggplot(data = df1) +
+  geom_point(mapping = aes(x =life_expectancy , y = infant_mortality))
+```
+
+**Birth rate vs Infant mortality**
+
+```{r}
+ggplot(data = df1) +
+  geom_point(mapping = aes(x =birth_rate , y = infant_mortality))
+```
+
+## Step 4: Analyze
+
+In this step, we will perform statistical tests that will test the relationships between various quantitative and continuous numerical data .
+
+We would be using Pearson\'s correlation testing to test various hypothesis , so that we get a clear understanding of the correlation or relationship strength between two variables 
+
+[Pearson\'s correlation test between infant mortality and birth rate]{.underline}
+
+```{r}
+result = cor.test(df1$infant_mortality, df1$birth_rate)
+result
+```
+
+·  The p- value is 2.2e-16
+
+·  r value or correlation coefficient value is 0.8583599
+
+· This means the p-value is a lot less than 0.05, which means we can reject the null hypothesis β = 0. Hence, there is a significant relationship between the variables
+
+· +.70 or higher - Very strong positive relationship or correlation
+
+·  Therefore infant mortality and birth rate have a very strong positive relationship or correlation
+
+[Pearson\'s correlation test between life expectancy and birth rate]{.underline}
+
+```{r}
+result1 = cor.test(df1$birth_rate, df1$life_expectancy)
+result1
+```
+
+·  This means we retain the null hypothesis and reject the alternative hypothesis as p - value is greater than 0.05.
+
+· No or negligible relationship between both the variables because correlation coefficient is -0.0512559
+
+Pearson\'s correlation test between population and armed forces size
+
+```{r}
+result2 = cor.test(df1$population, df1$armed_forces_size)
+result2
+```
+
+· The p-value is 2.2e-16
+
+· r value or correlation coefficient value is 0.87685
+
+·This means the p-value is a lot less than 0.05, which means we can reject the null hypothesis that β = 0. Hence, there is a significant relationship between the variables
+
+· +.70 or higher - Very strong positive relationship or correlation
+
+·Therefore population and armed forces size have a very strong positive relationship or correlation
